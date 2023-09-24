@@ -9,7 +9,7 @@ import os
 drivers_list = pyodbc.drivers()
 
 query_columns = 'select column_name from information_schema.columns where table_name = '
-query_data = f'select * from '
+query_data = 'select top 1000 * from '
 
 res_dir = '.\\results'
 
@@ -22,11 +22,11 @@ def get_data(conn):
 
     logs_columns = conn.execute(query_columns + "'pLogData';").fetchall()
     logs_list = [tuple(column_name[0] for column_name in logs_columns)]
-    logs_list.extend(conn.execute(query_data + "pLogData order by TimeVal;").fetchall())
+    logs_list.extend(conn.execute(query_data + "pLogData order by TimeVal desc;").fetchall())
 
     alarm_columns = conn.execute(query_columns + "'m_alarm';").fetchall()
     alarms_list = [tuple(column_name[0] for column_name in alarm_columns)]
-    alarms_list.extend(conn.execute(query_data + "m_alarm order by Time0;").fetchall())
+    alarms_list.extend(conn.execute(query_data + "m_alarm order by Time0 desc;").fetchall())
 
     return [events_list, logs_list, alarms_list]
 
